@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class CreatePlayerScore {
     private Integer playerId;
     private Integer minute;
-    private boolean isOwnGoal;
+    private boolean ownGoal;
 }
