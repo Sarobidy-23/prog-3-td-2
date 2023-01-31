@@ -6,7 +6,8 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
+@ToString
 @Data
 @EqualsAndHashCode
 public class TeamMatch {

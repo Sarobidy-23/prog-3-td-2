@@ -5,7 +5,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Getter
+@Data
 @EqualsAndHashCode
 @ToString
 public class PlayerScorer {

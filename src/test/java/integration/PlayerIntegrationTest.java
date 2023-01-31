@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,8 +19,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest(classes = FootApi.class)
 @AutoConfigureMockMvc
@@ -32,6 +35,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(1)
                 .name("J1")
+                .teamName("E1")
                 .isGuardian(false)
                 .build();
     }
@@ -40,6 +44,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(2)
                 .name("J2")
+                .teamName("E1")
                 .isGuardian(false)
                 .build();
     }
@@ -48,6 +53,7 @@ class PlayerIntegrationTest {
         return Player.builder()
                 .id(3)
                 .name("J3")
+                .teamName("E2")
                 .isGuardian(false)
                 .build();
     }
@@ -86,6 +92,73 @@ class PlayerIntegrationTest {
 
         assertEquals(1, actual.size());
         assertEquals(toCreate, actual.get(0).toBuilder().id(null).build());
+    }
+
+    @Test
+    void update_players_ok() throws Exception {
+        List<Player> expected = List.of(Player.builder()
+                .id(1)
+                .name("J1")
+                .teamName("E1")
+                .isGuardian(false)
+                .build());
+        MockHttpServletResponse response = mockMvc
+                .perform(put("/players")
+                        .content(objectMapper.writeValueAsString(expected))
+                        .contentType("application/json")
+                        .accept("application/json"))
+                .andReturn()
+                .getResponse();
+        List<Player> actual = convertFromHttpResponse(response);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void update_players_name_null_ko() throws Exception {
+        String expectedException = "400 BAD_REQUEST : Name is mandatory for update player.";
+        List<Player> expected = List.of(Player.builder()
+                .id(1)
+                .name(null)
+                .teamName("E1")
+                .isGuardian(false)
+                .build());
+        mockMvc.perform(put("/players")
+                        .content(objectMapper.writeValueAsString(expected))
+                        .contentType("application/json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertEquals(expectedException,result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void update_players_guardian_status_null_ko() throws Exception {
+        String expectedException = "400 BAD_REQUEST : Guardian status is mandatory for update player.";
+        List<Player> expected = List.of(Player.builder()
+                .id(1)
+                .name("J1")
+                .teamName("E1")
+                .isGuardian(null)
+                .build());
+        mockMvc.perform(put("/players")
+                        .content(objectMapper.writeValueAsString(expected))
+                        .contentType("application/json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertEquals(expectedException,result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void update_players_team_ok() throws Exception {
+        String expectedException = "400 BAD_REQUEST : Only name and guardian status can modifyed in player.";
+        List<Player> expected = List.of(Player.builder()
+                .id(1)
+                .name("J1")
+                .teamName("E2")
+                .isGuardian(false)
+                .build());
+        mockMvc.perform(put("/players")
+                        .content(objectMapper.writeValueAsString(expected))
+                        .contentType("application/json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertEquals(expectedException,result.getResolvedException().getMessage()));
     }
 
     private List<Player> convertFromHttpResponse(MockHttpServletResponse response)

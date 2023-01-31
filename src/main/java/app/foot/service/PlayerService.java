@@ -2,6 +2,8 @@ package app.foot.service;
 
 import app.foot.model.Player;
 import app.foot.repository.PlayerRepository;
+import app.foot.repository.TeamRepository;
+import app.foot.repository.entity.PlayerEntity;
 import app.foot.repository.mapper.PlayerMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 public class PlayerService {
     private final PlayerRepository repository;
     private final PlayerMapper mapper;
+    private final TeamRepository teamRepository;
 
     public List<Player> getPlayers() {
         return repository.findAll().stream()
@@ -28,4 +31,14 @@ public class PlayerService {
                 .map(mapper::toDomain)
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    public List<Player> updatePlayers(List<Player> toUpdate) {
+         List<PlayerEntity> domain = toUpdate.stream()
+                        .map(mapper::toEntity)
+                        .collect(Collectors.toUnmodifiableList());
+         return repository.saveAll(domain).stream()
+                 .map(mapper::toDomain)
+                 .collect(Collectors.toUnmodifiableList());
+    }
+
 }

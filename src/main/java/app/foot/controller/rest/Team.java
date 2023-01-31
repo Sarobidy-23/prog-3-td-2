@@ -4,8 +4,8 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Builder
+@Data
+@Builder(toBuilder = true)
 @EqualsAndHashCode
 @ToString
 public class Team {

@@ -1,5 +1,6 @@
 package app.foot.controller;
 
+import app.foot.controller.rest.CreateMatch;
 import app.foot.controller.rest.Match;
 import app.foot.controller.rest.PlayerScorer;
 import app.foot.controller.rest.mapper.MatchRestMapper;
@@ -17,6 +18,7 @@ public class MatchController {
     private final MatchService service;
     private final GoalValidator validator;
     private final MatchRestMapper mapper;
+
     private final PlayerScorerRestMapper scorerMapper;
 
     @GetMapping("/matches/{id}")
@@ -30,7 +32,11 @@ public class MatchController {
                 .map(mapper::toRest)
                 .toList();
     }
-    //TODO: add integration test ok and ko of adding goals into match where id = 3
+    @PostMapping("/matches")
+    public app.foot.model.Match createMatchById(@RequestBody CreateMatch toCreate) {
+        return service.addMatch(mapper.toEntity(toCreate));
+    }
+
     @PostMapping("/matches/{matchId}/goals")
     public Match addGoals(@PathVariable int matchId, @RequestBody List<PlayerScorer> scorers) {
         scorers.forEach(validator);

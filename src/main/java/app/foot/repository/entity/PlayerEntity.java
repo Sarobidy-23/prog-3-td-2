@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "player")
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
+@ToString
 public class PlayerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

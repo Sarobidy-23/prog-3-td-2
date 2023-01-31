@@ -4,8 +4,8 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Builder
+@Data
+@Builder(toBuilder = true)
 @ToString
 @EqualsAndHashCode
 public class Player {
