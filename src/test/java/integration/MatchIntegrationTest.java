@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = FootApi.class)
 @AutoConfigureMockMvc
-@Slf4j
 class MatchIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +39,15 @@ class MatchIntegrationTest {
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(expectedMatch2(), actual);
+    }
+
+    @Test
+    void read_match_by_id_ko() throws Exception{
+        String expectedException = "400 BAD_REQUEST : Match#5 not found.";
+        mockMvc.perform(get("/matches/5"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertEquals(expectedException, result.getResolvedException().getMessage()));
+
     }
 
     @Test
@@ -134,7 +142,7 @@ class MatchIntegrationTest {
                 .teamA(teamMatchA1_3())
                 .teamB(teamMatchB())
                 .stadium("S3")
-                .datetime(Instant.parse("2023-01-01T14:00:00Z")).build();
+                .datetime(Instant.parse("2023-01-01T18:00:00Z")).build();
     }
 
     private static TeamMatch teamMatchA1_3() {
@@ -186,6 +194,7 @@ class MatchIntegrationTest {
         return Player.builder()
                 .id(6)
                 .name("J6")
+                .teamName("E3")
                 .isGuardian(false)
                 .build();
     }
@@ -194,7 +203,7 @@ class MatchIntegrationTest {
         return Player.builder()
                 .id(3)
                 .name("J3")
-                .teamName("E3")
+                .teamName("E2")
                 .isGuardian(false)
                 .build();
     }

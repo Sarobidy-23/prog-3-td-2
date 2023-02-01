@@ -23,7 +23,7 @@ public class UpdatePlayerValidator implements Consumer<Player> {
         if (update.getIsGuardian() == null){
             exceptionMessage.append("Guardian status is mandatory for update player.");
         }
-        if (update.getTeamName() != actualPlayer.getTeam().getName()) {
+        if (!update.getTeamName().equals(actualPlayer.getTeam().getName())) {
             exceptionMessage.append("Only name and guardian status can modifyed in player.");
         }
         if (!exceptionMessage.isEmpty()){
