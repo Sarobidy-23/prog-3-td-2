@@ -8,6 +8,7 @@ import app.foot.repository.TeamRepository;
 import app.foot.repository.entity.MatchEntity;
 import app.foot.repository.entity.PlayerEntity;
 import app.foot.repository.entity.PlayerScoreEntity;
+import app.foot.repository.entity.TeamEntity;
 import app.foot.repository.mapper.PlayerMapper;
 import org.junit.jupiter.api.Test;
 
@@ -92,12 +93,36 @@ public class PlayerMapperTest {
                         .build())
                 .build());
 
-
         assertEquals(PlayerScoreEntity.builder()
                 .player(playerEntityRakoto(teamBarea()))
                 .minute(10)
                 .ownGoal(false)
                 .match(matchEntity1)
                 .build(), actual);
+    }
+
+    @Test
+    void player_to_entity_ok() {
+        TeamEntity team = TeamEntity.builder()
+                .id(1)
+                .name("E1")
+                .build();
+        Player player = Player.builder()
+                .id(1)
+                .name("J1")
+                .isGuardian(false)
+                .teamName("E1")
+                .build();
+        when(teamRepositoryMock.findByName("E1")).thenReturn(team);
+
+        PlayerEntity actual = subject.toEntity(player);
+        PlayerEntity expected = PlayerEntity.builder()
+                .id(1)
+                .name("J1")
+                .guardian(false)
+                .team(team)
+                .build();
+
+        assertEquals(expected,actual);
     }
 }
